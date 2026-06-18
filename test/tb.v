@@ -7,7 +7,7 @@ reg [7:0] vehicle2_pos;
 
 wire collision_warning;
 
-collision_detector uut (
+tt_um_v2x_warning uut (
     .vehicle1_pos(vehicle1_pos),
     .vehicle2_pos(vehicle2_pos),
     .collision_warning(collision_warning)
