@@ -1,49 +1,40 @@
-`default_nettype none
-`timescale 1ns / 1ps
+`timescale 1ns/1ps
 
-/* This testbench just instantiates the module and makes some convenient wires
-   that can be driven / tested by the cocotb test.py.
-*/
-module tb ();
+module testbench;
 
-  // Dump the signals to a FST file. You can view it with gtkwave or surfer.
-  initial begin
-    $dumpfile("tb.fst");
-    $dumpvars(0, tb);
-    #1;
-  end
+reg [7:0] vehicle1_pos;
+reg [7:0] vehicle2_pos;
 
-  // Wire up the inputs and outputs:
-  reg clk;
-  reg rst_n;
-  reg ena;
-  reg [7:0] ui_in;
-  reg [7:0] uio_in;
-  wire [7:0] uo_out;
-  wire [7:0] uio_out;
-  wire [7:0] uio_oe;
-`ifdef GL_TEST
-  wire VPWR = 1'b1;
-  wire VGND = 1'b0;
-`endif
+wire collision_warning;
 
-  // Replace tt_um_example with your module name:
-  tt_um_example user_project (
+collision_detector uut (
+    .vehicle1_pos(vehicle1_pos),
+    .vehicle2_pos(vehicle2_pos),
+    .collision_warning(collision_warning)
+);
 
-      // Include power ports for the Gate Level test:
-`ifdef GL_TEST
-      .VPWR(VPWR),
-      .VGND(VGND),
-`endif
+initial begin
 
-      .ui_in  (ui_in),    // Dedicated inputs
-      .uo_out (uo_out),   // Dedicated outputs
-      .uio_in (uio_in),   // IOs: Input path
-      .uio_out(uio_out),  // IOs: Output path
-      .uio_oe (uio_oe),   // IOs: Enable path (active high: 0=input, 1=output)
-      .ena    (ena),      // enable - goes high when design is selected
-      .clk    (clk),      // clock
-      .rst_n  (rst_n)     // not reset
-  );
+    $display("Starting V2X Collision Warning Test");
+
+    vehicle1_pos = 8'd50;
+    vehicle2_pos = 8'd70;
+
+    #10;
+
+    $display("Distance Safe -> Warning = %b", collision_warning);
+
+    vehicle1_pos = 8'd50;
+    vehicle2_pos = 8'd55;
+
+    #10;
+
+    $display("Collision Risk -> Warning = %b", collision_warning);
+
+    #10;
+
+    $finish;
+
+end
 
 endmodule
