@@ -90,7 +90,7 @@ module tb;
     // VCD Dump
     initial begin
         $dumpfile("v2x_warning.vcd");
-        $dumpvars(0, tb_tt_um_v2x_warning);
+        $dumpvars(0, tb);
     end
 
 endmodule
