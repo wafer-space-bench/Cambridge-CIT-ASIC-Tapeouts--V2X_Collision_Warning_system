@@ -1,3 +1,6 @@
+//====================================================
+// Tiny Tapeout Top Module
+//====================================================
 module tt_um_v2x_warning (
     input  wire [7:0] ui_in,
     output wire [7:0] uo_out,
@@ -10,24 +13,36 @@ module tt_um_v2x_warning (
     input  wire rst_n
 );
 
-wire [7:0] vehicle1_pos;
-wire [7:0] vehicle2_pos;
-wire [7:0] distance;
 wire collision_warning;
+wire alert_signal;
 
-assign vehicle1_pos = ui_in;
-assign vehicle2_pos = uio_in;
+//----------------------------------------------------
+// Collision Detection
+//----------------------------------------------------
+collision_detector u_collision_detector (
+    .vehicle1_pos(ui_in),
+    .vehicle2_pos(uio_in),
+    .collision_warning(collision_warning)
+);
 
-assign distance =
-    (vehicle1_pos > vehicle2_pos) ?
-    (vehicle1_pos - vehicle2_pos) :
-    (vehicle2_pos - vehicle1_pos);
+//----------------------------------------------------
+// Alert Generation
+//----------------------------------------------------
+v2v_controller u_v2v_controller (
+    .collision_warning(collision_warning),
+    .alert_signal(alert_signal)
+);
 
-assign collision_warning = (distance < 8'd10);
+//----------------------------------------------------
+// Outputs
+//----------------------------------------------------
+assign uo_out = {7'b0000000, alert_signal};
 
-assign uo_out = {7'b0000000, collision_warning};
-
+// Bidirectional pins unused
 assign uio_out = 8'b00000000;
 assign uio_oe  = 8'b00000000;
+
+// Suppress unused signal warnings
+wire _unused = &{ena, clk, rst_n, 1'b0};
 
 endmodule
