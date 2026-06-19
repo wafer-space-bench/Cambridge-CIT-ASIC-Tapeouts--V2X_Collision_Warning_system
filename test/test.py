@@ -8,33 +8,54 @@ from cocotb.triggers import ClockCycles
 
 @cocotb.test()
 async def test_project(dut):
-    dut._log.info("Start")
+    dut._log.info("Starting V2V Collision Warning Test")
 
-    # Set the clock period to 10 us (100 KHz)
     clock = Clock(dut.clk, 10, unit="us")
     cocotb.start_soon(clock.start())
 
     # Reset
-    dut._log.info("Reset")
     dut.ena.value = 1
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
+
     await ClockCycles(dut.clk, 10)
+
     dut.rst_n.value = 1
 
-    dut._log.info("Test project behavior")
+    # Test Case 1
+    dut.ui_in.value = 50
+    dut.uio_in.value = 55
+    await ClockCycles(dut.clk, 1)
+    assert int(dut.uo_out.value) == 1, \
+        "Failed: Distance=5 should generate warning"
 
-    # Set the input values you want to test
+    # Test Case 2
+    dut.ui_in.value = 20
+    dut.uio_in.value = 40
+    await ClockCycles(dut.clk, 1)
+    assert int(dut.uo_out.value) == 0, \
+        "Failed: Distance=20 should not generate warning"
+
+    # Test Case 3
+    dut.ui_in.value = 100
+    dut.uio_in.value = 108
+    await ClockCycles(dut.clk, 1)
+    assert int(dut.uo_out.value) == 1, \
+        "Failed: Distance=8 should generate warning"
+
+    # Test Case 4
     dut.ui_in.value = 20
     dut.uio_in.value = 30
-
-    # Wait for one clock cycle to see the output values
     await ClockCycles(dut.clk, 1)
+    assert int(dut.uo_out.value) == 0, \
+        "Failed: Distance=10 should not generate warning"
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    assert dut.uo_out.value == 50
+    # Test Case 5
+    dut.ui_in.value = 80
+    dut.uio_in.value = 80
+    await ClockCycles(dut.clk, 1)
+    assert int(dut.uo_out.value) == 1, \
+        "Failed: Distance=0 should generate warning"
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    dut._log.info("All V2V tests passed!")
