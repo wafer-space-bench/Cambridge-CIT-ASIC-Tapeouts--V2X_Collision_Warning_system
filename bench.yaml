@@ -1,0 +1,26 @@
+source:
+  url: https://github.com/Cambridge-CIT-ASIC-Tapeouts/V2X_Collision_Warning_system
+  original_url: null
+  kind: fork
+  why: GitHub fork of the upstream repository
+  licence: null
+  upstream_default_branch: main
+tapeouts:
+- org: tinytapeout
+  run: ttgf26b
+  slot: tt_um_v2x_warning
+  project: V2X Collision Warning
+  size: 1x1
+  kind: digital (Verilog)
+  commit: a2a47372817aa8cc017dec5026dc36ef60e27105
+  commit_source: commit from the shuttle repo's projects/<name>/commit_id.json
+  tag: tinytapeout/ttgf26b/tt_um_v2x_warning
+  branch: tapeout/tinytapeout/ttgf26b/tt_um_v2x_warning
+  page: https://app.tinytapeout.com/shuttles/ttgf26b
+generated: '2026-10-17T23:19:26Z'
+tooling: https://github.com/wafer-space/wafer.space-bench
+index: https://wafer-space-bench.github.io
+branches:
+- about
+- tapeout/tinytapeout/ttgf26b/tt_um_v2x_warning
+- upstream/main
